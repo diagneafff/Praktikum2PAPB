@@ -6,6 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,7 +35,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CardGreetingScreen(modifier: Modifier = Modifier) {
     var name by remember { mutableStateOf("") }
+    var nim by remember { mutableStateOf("") }
     var inputName by remember { mutableStateOf("") }
+    var inputNim by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -50,7 +55,8 @@ fun CardGreetingScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Hello $name!", fontSize = 24.sp)
+                Text(text = "Halo $name!", fontSize = 24.sp)
+                Text(text = "NIM Anda: $nim", fontSize = 20.sp)
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -58,13 +64,30 @@ fun CardGreetingScreen(modifier: Modifier = Modifier) {
         TextField(
             value = inputName,
             onValueChange = { inputName = it },
-            label = { Text("Enter your name") },
+            label = { Text("Masukkan nama Anda") },
+            leadingIcon = {
+                Icon(imageVector = Icons.Default.AccountBox, contentDescription = "Nama")
+            },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { name = inputName }, modifier = Modifier.fillMaxWidth()) {
-            Text("Submit")
+        TextField(
+            value = inputNim,
+            onValueChange = { inputNim = it },
+            label = { Text("Masukkan NIM Anda") },
+            leadingIcon = {
+                Icon(imageVector = Icons.Default.Person, contentDescription = "NIM")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = {
+            name = inputName
+            nim = inputNim
+        }, modifier = Modifier.fillMaxWidth()) {
+            Text("Kirim")
         }
     }
 }
