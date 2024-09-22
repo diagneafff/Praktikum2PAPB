@@ -1,9 +1,12 @@
 package com.papb.textfield2
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,10 +16,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.papb.textfield2.ui.theme.TextField2Theme
+import kotlinx.coroutines.coroutineScope
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +45,10 @@ fun CardGreetingScreen(modifier: Modifier = Modifier) {
     var nim by remember { mutableStateOf("") }
     var inputName by remember { mutableStateOf("") }
     var inputNim by remember { mutableStateOf("") }
+
+    // UI state untuk button
+    val isFormComplete = inputName.isNotBlank() && inputNim.isNotBlank()
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -83,11 +94,50 @@ fun CardGreetingScreen(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
-            name = inputName
-            nim = inputNim
-        }, modifier = Modifier.fillMaxWidth()) {
+        Button(
+            onClick = {
+                name = inputName
+                nim = inputNim
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isFormComplete, // Tombol hanya aktif jika form lengkap
+            colors = ButtonDefaults.buttonColors(
+                disabledContainerColor = Color.Gray, // Warna abu-abu saat dinonaktifkan
+                disabledContentColor = Color.LightGray
+            )
+        ) {
             Text("Kirim")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Button with long press detection using pointerInput
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = {
+                            if (isFormComplete) {
+                                Toast.makeText(context, "Nama: $name, NIM: $nim", Toast.LENGTH_LONG).show()
+                            } else {
+                                Toast.makeText(context, "Lengkapi form terlebih dahulu", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
+                }
+                .padding(vertical = 8.dp)
+                .background(
+                    if (isFormComplete) MaterialTheme.colorScheme.primary else Color.Gray,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(16.dp)
+        ) {
+            Text(
+                "Tampilkan Nama & NIM",
+                color = if (isFormComplete) MaterialTheme.colorScheme.onPrimary else Color.LightGray,
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 }
